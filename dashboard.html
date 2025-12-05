@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bueiros Inteligente</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="/js/dashboard.js" defer></script>
+</head>
+<body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <img src="Kapwbs.png" alt="KAPWBS Logo" class="logo-image">
+        </div>
+
+        <div class="topbar-right">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>Sistema Online</span>
+            </div>
+            <button class="logout-topbar" onclick="showLogoutPopup()">Logout</button>
+        </div>
+    </header>
+
+    <!-- LOGOUT POPUP -->
+    <div id="logoutPopup" class="popup-overlay">
+        <div class="popup">
+            <h3>Confirmar Logout</h3>
+            <p>Deseja realmente sair do sistema?</p>
+            <div class="popup-buttons">
+                <button class="btn btn-cancel" onclick="closeLogoutPopup()">Cancelar</button>
+                <button class="btn btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <i>📊</i> Dashboard
+            </a>
+            <a href="bueiros.html" class="nav-item">
+                <i>🕳️</i> Bueiros
+            </a>
+            <a href="energia.html" class="nav-item">
+                <i>⚡</i> Energia
+            </a>
+            <a href="materiaprima.html" class="nav-item">
+                <i>♻️</i> Matéria-Prima
+            </a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <h1>🌟 Centro de Comando Bueiros Inteligente</h1>
+            <p>Monitore e controle todos os sistemas da cidade inteligente em um painel centralizado</p>
+        </header>
+
+        <!-- OVERVIEW CARDS -->
+        <section class="overview-grid">
+            <div class="overview-card" onclick="navigateTo('bueiros.html')">
+                <span class="card-trend trend-warning">Atenção</span>
+                <span class="card-icon">🕳️</span>
+                <div class="card-title">Bueiros Críticos</div>
+                <div class="card-value" id="criticalDrains">8.00%</div>
+                <div class="card-subtitle">1,240 monitorados | 47 necessitam atenção</div>
+            </div>
+
+            <div class="overview-card" onclick="navigateTo('materiaprima.html')">
+                <span class="card-trend trend-up">+12%</span>
+                <span class="card-icon">🌱</span>
+                <div class="card-title">Matéria Prima Reciclada</div>
+                <div class="card-value" id="positiveImpact">78.5%</div>
+                <div class="card-subtitle">Recuperação de Matéria-Prima e Mitigação de Carbono</div>
+            </div>
+
+            <div class="overview-card">
+                <span class="card-trend trend-up">+5%</span>
+                <span class="card-icon">🌡️</span>
+                <div class="card-title">Sensores Ativos</div>
+                <div class="card-value" id="activeSensors">1,847</div>
+                <div class="card-subtitle">Temperatura, umidade e qualidade do ar</div>
+            </div>
+        </section>
+
+        <!-- SYSTEM METRICS -->
+        <section class="system-metrics">
+            <div class="metric-item">
+                <div class="metric-value" id="systemUptime">99.80%</div>
+                <div class="metric-label">Uptime do Sistema</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="dataProcessed">847</div>
+                <div class="metric-label">GB Processados</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="responseTime">142</div>
+                <div class="metric-label">ms Tempo Resposta</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" id="alerts">3</div>
+                <div class="metric-label">Alertas Ativos</div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD GRID -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📈 Performance do Sistema (Últimas 24h)</h3>
+                <div class="chart-container">
+                    <canvas id="systemChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📝 Log de Eventos do Sistema</h3>
+                <div class="log-container" id="logContainer"></div>
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="action-buttons">
+            <button class="action-btn btn-primary" onclick="handleSync()">
+                <span>🔄</span> Sincronizar Sistemas
+            </button>
+            <button class="action-btn btn-secondary" onclick="openQueue()">
+                <span>📋</span> Fila de Solicitações
+            </button>
+            <button class="action-btn btn-secondary" onclick="generateReport()">
+                <span>📊</span> Gerar Relatório
+            </button>
+        </div>
+    </main>
+
+    <!-- MODAL - QUEUE -->
+    <div id="queueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📋 Fila de Solicitações</h2>
+                <span class="close" onclick="closeModal('queueModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="queueModalBody"></div>
+        </div>
+    </div>
+
+    <!-- MODAL - REPORT -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📊 Relatório Detalhado</h2>
+                <span class="close" onclick="closeModal('reportModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="reportModalBody"></div>
+        </div>
+    </div>
+</body>
+</html>

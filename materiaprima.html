@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matéria-Prima e Sustentabilidade - SmartCity</title>
+    <link rel="stylesheet" href="/css/materiaprima.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="/js/materiaprima.js" defer></script>
+</head>
+<body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <img src="Kapwbs.png" alt="KAPWBS Logo" class="logo-image">
+        </div>
+        <div class="topbar-right">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>Sistema Online</span>
+            </div>
+            <button class="logout-topbar" onclick="showLogoutPopup()">Logout</button>
+        </div>
+    </header>
+
+    <!-- LOGOUT POPUP -->
+    <div id="logoutPopup" class="popup-overlay">
+        <div class="popup">
+            <h3>Confirmar Logout</h3>
+            <p>Deseja realmente sair do sistema?</p>
+            <div class="popup-buttons">
+                <button class="btn btn-cancel" onclick="closeLogoutPopup()">Cancelar</button>
+                <button class="btn btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i>📊</i> Dashboard
+            </a>
+            <a href="bueiros.html" class="nav-item">
+                <i>🕳️</i> Bueiros
+            </a>
+            <a href="energia.html" class="nav-item">
+                <i>⚡</i> Energia
+            </a>
+            <a href="materiaprima.html" class="nav-item active">
+                <i>♻️</i> Matéria-Prima
+            </a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🌱 Recuperação de Matéria-Prima e Impacto Ambiental</h1>
+            <p>Monitoramento de sustentabilidade e análise de impacto ambiental positivo</p>
+            
+            <!-- Quick Stats Bar -->
+            <div class="quick-stats-bar">
+                <div class="quick-stat">
+                    <span class="stat-icon">📈</span>
+                    <span class="stat-text">Resíduos este mês: <strong id="monthlyWaste">2,150</strong> kg</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="stat-icon">🌍</span>
+                    <span class="stat-text">Carbono economizado: <strong id="monthlyCO2">215</strong> kg</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-text">Meta mensal: <strong id="monthlyTarget">65%</strong> atingida</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÉTRICAS PRINCIPAIS -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">♻️</div>
+                <div class="metric-label">Resíduos Desviados</div>
+                <div class="metric-value" id="wasteDivertedValue">15000</div>
+                <div class="metric-unit">kg</div>
+                <div class="metric-change">↑ +250 kg neste mês</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">💨</div>
+                <div class="metric-label">Carbono Mitigado</div>
+                <div class="metric-value" id="co2ReducedValue">5000</div>
+                <div class="metric-unit">kg CO₂ equivalente</div>
+                <div class="metric-change">↑ +25 kg CO₂ neste mês</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">⚡</div>
+                <div class="metric-label">Energia Renovável</div>
+                <div class="metric-value" id="renewableEnergyValue">2840</div>
+                <div class="metric-unit">kWh</div>
+                <div class="metric-change">↑ +84 kWh neste mês</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🔥</div>
+                <div class="metric-label">Contribuição Biogás</div>
+                <div class="metric-value" id="biogasContributionValue">15</div>
+                <div class="metric-unit">%</div>
+                <div class="metric-change">↑ +0.5% neste mês</div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>📊 Evolução de Resíduos Desviados (últimos 12 meses)</h3>
+                <div class="chart-container">
+                    <canvas id="wasteChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>🌍 Impacto de Carbono (últimos 12 meses)</h3>
+                <div class="chart-container">
+                    <canvas id="carbonChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMPACT SECTION -->
+        <div class="impact-grid">
+            <div class="impact-card">
+                <h4>🌲 Árvores Economizadas</h4>
+                <p class="impact-description">A cada 100kg de resíduos desviados, economizamos aproximadamente 1 árvore. Total economizado: 150 árvores.</p>
+            </div>
+            <div class="impact-card">
+                <h4>💧 Água Preservada</h4>
+                <p class="impact-description">Processo de reciclagem economiza cerca de 500 litros de água por kg de material processado. Total preservado: 7.5 milhões de litros.</p>
+            </div>
+            <div class="impact-card">
+                <h4>🏭 Redução de Aterro</h4>
+                <p class="impact-description">Redução significativa do volume de resíduos destinados a aterros sanitários, prolongando sua vida útil.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating action buttons -->
+    <div class="floating-buttons-container">
+        <button class="refresh-btn" onclick="refreshData()">
+            <span class="fab-tooltip">Atualizar Dados</span>
+            ⟳
+        </button>
+        <button class="simulate-btn" onclick="simulateMaterialsCollection()">
+            <span class="fab-tooltip">Simular Coleta</span>
+            ⚡
+        </button>
+        <button class="export-btn" onclick="exportMetricsReport()">
+            <span class="fab-tooltip">Exportar Relatório</span>
+            📄
+        </button>
+    </div>
+</body>
+</html>

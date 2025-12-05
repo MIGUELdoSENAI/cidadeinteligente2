@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento de Bueiros - SmartCity</title>
+    <link rel="stylesheet" href="/css/bueiros.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="/js/bueiros.js" defer></script>
+</head>
+<body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <img src="Kapwbs.png" alt="KAPWBS Logo" class="logo-image">
+        </div>
+
+        <div class="topbar-right">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>Sistema Online</span>
+            </div>
+            <button class="logout-topbar" onclick="showLogoutPopup()">Logout</button>
+        </div>
+    </header>
+
+    <!-- LOGOUT POPUP -->
+    <div id="logoutPopup" class="popup-overlay">
+        <div class="popup">
+            <h3>Confirmar Logout</h3>
+            <p>Deseja realmente sair do sistema?</p>
+            <div class="popup-buttons">
+                <button class="btn btn-cancel" onclick="closeLogoutPopup()">Cancelar</button>
+                <button class="btn btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <i>📊</i> Dashboard
+            </a>
+            <a href="bueiros.html" class="nav-item active">
+                <i>🕳️</i> Bueiros
+            </a>
+            <a href="energia.html" class="nav-item">
+                <i>⚡</i> Energia
+            </a>
+            <a href="materiaprima.html" class="nav-item">
+                <i>♻️</i> Matéria-Prima
+            </a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Monitoramento de Bueiros Inteligentes</h1>
+            <p>Sistema avançado de monitoramento em tempo real para prevenção de enchentes</p>
+        </div>
+
+        <!-- CONTROLES MELHORADOS -->
+        <div class="controls-section">
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label class="form-label">🔍 Buscar Bueiro</label>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Digite ID ou localização...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📊 Filtrar Status</label>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">🔄 Todos os Status</option>
+                        <option value="normal">✅ Normal</option>
+                        <option value="warning">⚠️ Warning</option>
+                        <option value="critical">🚨 Critical</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateTXTReport()">
+                    📄 Relatório
+                </button>
+            </div>
+        </div>
+
+        <!-- LAYOUT PRINCIPAL -->
+        <div class="main-grid">
+            <!-- GRID DE BUEIROS -->
+            <div class="bueiros-section">
+                <div class="section-title">
+                    <span>🚰</span>
+                    <span>Bueiros Monitorados</span>
+                    <span id="bueirosCount" style="margin-left: auto; font-size: 0.9rem; opacity: 0.8;"></span>
+                </div>
+                <div class="bueiros-grid" id="bueirosGrid">
+                    <!-- Cards de bueiros serão gerados dinamicamente -->
+                </div>
+            </div>
+
+            <!-- PAINEL LATERAL -->
+            <div class="stats-panel">
+                <div class="section-title">
+                    <span>📈</span>
+                    <span>Estatísticas Gerais</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgLevel">0%</div>
+                        <div class="stat-label">Nível Médio</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="criticalCount">0</div>
+                        <div class="stat-label">Bueiros Críticos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="lastMaintenance">--</div>
+                        <div class="stat-label">Última Manutenção</div>
+                    </div>
+                </div>
+
+                <div class="alerts-section">
+                    <div class="section-title">
+                        <span>🚨</span>
+                        <span>Alertas Recentes</span>
+                    </div>
+                    <div id="alertsList">
+                        <!-- Alertas serão gerados dinamicamente -->
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="section-title">
+                        <span>📊</span>
+                        <span>Evolução Histórica</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="historicalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS -->
+    <!-- Modal de Detalhes -->
+    <div id="detailsModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Bueiro</h3>
+                <button class="modal-close" onclick="closeModal('detailsModal')">✕</button>
+            </div>
+            <div class="modal-content">
+                <div id="detailsContent" class="detail-grid">
+                    <!-- Conteúdo será preenchido dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Processo de Manutenção -->
+    <div id="maintenanceModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Processo de Manutenção</h3>
+                <button class="modal-close" onclick="closeModal('maintenanceModal')">✕</button>
+            </div>
+            <div class="modal-content">
+                <div class="maintenance-process" id="maintenanceProcess">
+                    <div class="process-step" id="step1">
+                        <div class="step-icon">🚛</div>
+                        <div class="step-content">
+                            <div class="step-title">Caminhão se deslocando para o destino</div>
+                            <div class="step-description">Caminhão iniciando trajeto para o bueiro</div>
+                        </div>
+                    </div>
+                    <div class="process-step" id="step2">
+                        <div class="step-icon">📍</div>
+                        <div class="step-content">
+                            <div class="step-title">Chegada ao Local</div>
+                            <div class="step-description">Posicionamento sobre o bueiro</div>
+                        </div>
+                    </div>
+                    <div class="process-step" id="step3">
+                        <div class="step-icon">🧹</div>
+                        <div class="step-content">
+                            <div class="step-title">Coleta de Detritos</div>
+                            <div class="step-description">Aspiração e limpeza em progresso</div>
+                        </div>
+                    </div>
+                    <div class="process-step" id="step3-5">
+                        <div class="step-icon">♻️</div>
+                        <div class="step-content">
+                            <div class="step-title">Análise e Separação de Resíduos</div>
+                            <div class="step-description">Classificação de materiais recicláveis</div>
+                        </div>
+                    </div>
+                    <div class="process-step" id="step4">
+                        <div class="step-icon">🔍</div>
+                        <div class="step-content">
+                            <div class="step-title">Inspeção Final</div>
+                            <div class="step-description">Verificação da limpeza completa</div>
+                        </div>
+                    </div>
+                    <div class="process-step" id="step5">
+                        <div class="step-icon">🏠</div>
+                        <div class="step-content">
+                            <div class="step-title">Retorno à Estação</div>
+                            <div class="step-description">Caminhão retornando para base</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="process-progress">
+                    <div class="process-progress-bar" id="processProgressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Registro de Matéria-Prima -->
+    <div id="materialsModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Registro de Matéria-Prima Coletada</h3>
+                <button class="modal-close" onclick="closeModal('materialsModal')">✕</button>
+            </div>
+            <div class="modal-content">
+                <div class="materials-form">
+                    <div class="form-group">
+                        <label class="form-label">🔩 Ferro (kg)</label>
+                        <input type="number" id="ironInput" class="form-input" placeholder="Digite a quantidade de ferro" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🪟 Vidro (kg)</label>
+                        <input type="number" id="glassInput" class="form-input" placeholder="Digite a quantidade de vidro" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🌱 Orgânicos (kg)</label>
+                        <input type="number" id="organicInput" class="form-input" placeholder="Digite a quantidade de orgânicos" min="0" step="0.1">
+                    </div>
+                    <div class="materials-summary">
+                        <div class="summary-item">
+                            <span>Total de Materiais:</span>
+                            <span id="totalMaterials" class="summary-value">0 kg</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="registerMaterials(currentBueiroId)" style="width: 100%;">
+                        ✅ Confirmar Registro de Materiais
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOOLTIP -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <!-- NOTIFICAÇÃO -->
+    <div id="notification" class="notification"></div>
+</body>
+</html>

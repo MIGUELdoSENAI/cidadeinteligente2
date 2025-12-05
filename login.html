@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Painel Empresa - Cidade Inteligente</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    /* ==== RESET E VARIÁVEIS ==== */
+    *{margin:0;padding:0;box-sizing:border-box;}
+    
+    :root {
+        /* Cores Escuras - Azul Marinho e Verde Esmeralda */
+        --bg-gradient-start: #0d1854;
+        --bg-gradient-mid: #1a237e;
+        --bg-gradient-end: #283593;
+        --card-bg: rgba(255, 255, 255, 0.08);
+        --card-border: rgba(255, 255, 255, 0.15);
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.85);
+        --text-muted: rgba(255, 255, 255, 0.6);
+        --input-bg: rgba(255, 255, 255, 0.08);
+        --input-border: rgba(255, 255, 255, 0.2);
+        --input-focus: rgba(0, 200, 83, 0.5);
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --accent: #00c853;
+        --accent-hover: #00a844;
+        --accent-glow: rgba(0, 200, 83, 0.3);
+        --success: #00c853;
+        --error: #ef4444;
+        --toggle-bg: rgba(255, 255, 255, 0.1);
+        --pattern-color: rgba(255, 255, 255, 0.02);
+        --glow-1: rgba(0, 200, 83, 0.15);
+        --glow-2: rgba(26, 35, 126, 0.1);
+    }
+    
+    [data-theme="light"] {
+        /* Cores Claras - Branco e Verde Esmeralda */
+        --bg-gradient-start: #f8fafc;
+        --bg-gradient-mid: #ffffff;
+        --bg-gradient-end: #e8f5e9;
+        --card-bg: rgba(255, 255, 255, 0.9);
+        --card-border: rgba(0, 200, 83, 0.15);
+        --text-primary: #1a237e;
+        --text-secondary: #283593;
+        --text-muted: #5c6bc0;
+        --input-bg: rgba(255, 255, 255, 0.8);
+        --input-border: rgba(0, 200, 83, 0.2);
+        --input-focus: rgba(0, 200, 83, 0.3);
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --accent: #00c853;
+        --accent-hover: #00a844;
+        --accent-glow: rgba(0, 200, 83, 0.2);
+        --success: #00c853;
+        --error: #ef4444;
+        --toggle-bg: rgba(0, 200, 83, 0.05);
+        --pattern-color: rgba(0, 200, 83, 0.02);
+        --glow-1: rgba(0, 200, 83, 0.08);
+        --glow-2: rgba(26, 35, 126, 0.05);
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+        position: relative;
+        overflow: hidden;
+        transition: background 0.5s ease;
+    }
+    
+    /* Padrão de fundo animado */
+    body::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, var(--pattern-color) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: backgroundMove 80s linear infinite;
+        z-index: 0;
+    }
+    
+    /* Efeito de luz ambiente */
+    body::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: 
+            radial-gradient(circle at 30% 40%, var(--glow-1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, var(--glow-2) 0%, transparent 50%);
+        animation: lightFloat 25s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    #login-root {
+        width: 100%;
+        max-width: 440px;
+        padding: 1rem;
+        z-index: 10;
+        position: relative;
+    }
+
+    /* ==== BOTÃO TEMA ==== */
+    .theme-toggle {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--card-border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px var(--shadow-color);
+        z-index: 100;
+    }
+    
+    .theme-toggle:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 30px var(--shadow-color);
+    }
+    
+    .theme-toggle:active {
+        transform: translateY(0) scale(0.98);
+    }
+    
+    .theme-icon {
+        width: 24px;
+        height: 24px;
+        transition: all 0.3s ease;
+    }
+    
+    .theme-icon path {
+        fill: var(--text-primary);
+    }
+    
+    .theme-toggle .sun-icon {
+        display: none;
+    }
+    
+    [data-theme="light"] .theme-toggle .sun-icon {
+        display: block;
+    }
+    
+    [data-theme="light"] .theme-toggle .moon-icon {
+        display: none;
+    }
+
+    /* ==== HEADER ==== */
+    header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        animation: fadeInDown 0.8s ease;
+    }
+
+    .logo-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 72px;
+        height: 72px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 32px var(--accent-glow);
+        animation: logoFloat 3s ease-in-out infinite;
+        position: relative;
+    }
+    
+    .logo-container::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        border-radius: 20px;
+        opacity: 0.3;
+        filter: blur(10px);
+        z-index: -1;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        fill: white;
+    }
+
+    h1 {
+        color: var(--text-primary);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 400;
+        letter-spacing: 0.01em;
+    }
+
+    /* ==== CARD DE LOGIN ==== */
+    .login-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        box-shadow: 
+            0 20px 60px var(--shadow-color),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: fadeInUp 0.8s ease 0.2s both;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s ease;
+    }
+
+    /* Efeito de brilho no hover */
+    .login-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .login-card:hover::before {
+        left: 100%;
+    }
+
+    #loginForm {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ==== INPUTS ==== */
+    .form-group {
+        margin-bottom: 1.75rem;
+        position: relative;
+    }
+
+    label {
+        display: block;
+        color: var(--text-secondary);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.02em;
+    }
+
+    .input-container {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        fill: var(--text-muted);
+        transition: all 0.3s ease;
+        z-index: 2;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 14px 16px 14px 48px;
+        background: var(--input-bg);
+        border: 2px solid var(--input-border);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    input::placeholder {
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    input:hover {
+        border-color: var(--accent);
+        background: var(--input-bg);
+    }
+
+    input:focus {
+        background: var(--input-bg);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--input-focus);
+        transform: translateY(-1px);
+    }
+
+    input:focus + .input-icon {
+        fill: var(--accent);
+    }
+
+    input.error {
+        border-color: var(--error) !important;
+        animation: shake 0.5s;
+    }
+
+    /* ==== BOTÃO ==== */
+    .btn-login {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 0.02em;
+        margin-top: 0.5rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .btn-login::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-login:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px var(--accent-glow);
+    }
+    
+    .btn-login:hover:not(:disabled)::before {
+        left: 100%;
+    }
+
+    .btn-login:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .btn-login.loading {
+        color: transparent;
+        pointer-events: none;
+    }
+
+    .btn-login.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+        border: 2px solid white;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.8s linear infinite;
+    }
+
+    .btn-login:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* ==== MENSAGENS ==== */
+    #errorMessage {
+        margin-top: 1rem;
+        padding: 14px 16px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: none;
+        animation: fadeIn 0.3s;
+    }
+
+    #errorMessage.error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--error);
+        animation: shake 0.5s, fadeIn 0.3s;
+    }
+
+    #errorMessage.success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: var(--success);
+    }
+
+    /* ==== FOOTER ==== */
+    footer {
+        text-align: center;
+        margin-top: 3rem;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        animation: fadeIn 0.8s ease 0.4s both;
+    }
+
+    footer p {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .footer-icon {
+        width: 18px;
+        height: 18px;
+        fill: var(--accent);
+        vertical-align: middle;
+        margin: 0 5px;
+        animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    /* ==== ANIMAÇÕES ==== */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes logoFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @keyframes backgroundMove {
+        from { transform: translate(0, 0); }
+        to { transform: translate(40px, 40px); }
+    }
+
+    @keyframes lightFloat {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+
+    @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+    }
+
+    /* ==== RESPONSIVO ==== */
+    @media (max-width: 768px) {
+        .theme-toggle {
+            top: 1rem;
+            right: 1rem;
+            width: 48px;
+            height: 48px;
+        }
+        
+        #login-root {
+            padding: 0.5rem;
+        }
+        
+        h1 {
+            font-size: 1.75rem;
+        }
+        
+        .login-card {
+            padding: 2.5rem 2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.5rem;
+        }
+        
+        .subtitle {
+            font-size: 0.875rem;
+        }
+        
+        .login-card {
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+        }
+        
+        input {
+            font-size: 0.9rem;
+            padding: 12px 12px 12px 44px;
+        }
+        
+        .btn-login {
+            font-size: 0.95rem;
+            padding: 14px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- Botão de alternância de tema -->
+<button class="theme-toggle" aria-label="Alternar tema">
+    <svg class="theme-icon moon-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <svg class="theme-icon sun-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 7a5 5 0 100 10 5 5 0 000-10z"/>
+    </svg>
+</button>
+
+<main id="login-root">
+    <header>
+        <div class="logo-container">
+            <svg class="logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12,2L4,9V21H20V9L12,2M12,4.5L18,10V19H16V13H8V19H6V10L12,4.5M10,15H14V19H10V15Z"/>
+            </svg>
+        </div>
+        <h1>Painel Cidade Inteligente</h1>
+        <p class="subtitle">Acesso seguro e autorizado</p>
+    </header>
+
+    <div class="login-card">
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <div class="input-container">
+                    <svg class="input-icon" viewBox="0 0 24 24">
+                        <path d="M12,12A5,5 0 1,0 12,2A5,5 0 0,0 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"/>
+                    </svg>
+                    <input type="text" id="username" placeholder="Digite seu usuário" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="input-container">
+                    <svg class="input-icon" viewBox="0 0 24 24">
+                        <path d="M12,17A2,2 0 0,0 14,15V11A2,2 0 0,0 12,9A2,2 0 0,0 10,11V15A2,2 0 0,0 12,17M17,8V7A5,5 0 0,0 7,7V8H5V20H19V8H17M9,7A3,3 0 0,1 15,7V8H9V7Z"/>
+                    </svg>
+                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">Entrar</button>
+            <div id="errorMessage"></div>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2025 Cidade Inteligente</p>
+        <svg class="footer-icon" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+    </footer>
+</main>
+
+<script>
+/* ===== TEMA CLARO/ESCURO ===== */
+const themeToggle = document.querySelector('.theme-toggle');
+const htmlElement = document.documentElement;
+
+// Carregar tema salvo ou usar preferência do sistema
+const savedTheme = localStorage.getItem('theme');
+const systemPreference = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+const currentTheme = savedTheme || systemPreference;
+
+htmlElement.setAttribute('data-theme', currentTheme);
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = htmlElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    htmlElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+});
+
+/* ===== AUTENTICAÇÃO ===== */
+const usersDB = [
+    {username: 'admin', password: '1234'},
+    {username: 'usuario', password: 'abcd'}
+];
+
+function showMessage(msg, type = 'error') {
+    const msgBox = document.getElementById('errorMessage');
+    msgBox.textContent = msg;
+    msgBox.className = type;
+    msgBox.style.display = 'block';
+    setTimeout(() => msgBox.style.display = 'none', 4000);
+}
+
+function checkAuth() {
+    return !!localStorage.getItem('loginData');
+}
+
+function requireAuth() {
+    if (!checkAuth()) {
+        sessionStorage.setItem('redirectAfterLogin', window.location.href);
+        window.location.replace('login.html');
+        return false;
+    }
+    return true;
+}
+
+function logout() {
+    localStorage.removeItem('loginData');
+    sessionStorage.removeItem('redirectAfterLogin');
+    window.location.replace('login.html');
+}
+
+/* ===== LOGIN ===== */
+const form = document.getElementById('loginForm');
+let attempts = 0;
+const maxAttempts = 3;
+
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const btn = form.querySelector('.btn-login');
+    
+    btn.classList.add('loading');
+    
+    setTimeout(() => {
+        btn.classList.remove('loading');
+        const user = usersDB.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+            localStorage.setItem('loginData', JSON.stringify({username}));
+            showMessage('Login realizado com sucesso!', 'success');
+            const redirect = sessionStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+            sessionStorage.removeItem('redirectAfterLogin');
+            setTimeout(() => window.location.replace(redirect), 1000);
+        } else {
+            attempts++;
+            showMessage(`Usuário ou senha incorretos! Tentativa ${attempts}/${maxAttempts}`, 'error');
+            
+            if (attempts >= maxAttempts) {
+                showMessage('Número máximo de tentativas atingido! Bloqueando por 10s', 'error');
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.disabled = false;
+                    attempts = 0;
+                }, 10000);
+            }
+        }
+    }, 600);
+});
+
+/* ===== KONAMI CODE EASTER EGG ===== */
+const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+let konamiIndex = 0;
+
+document.addEventListener('keydown', e => {
+    if (e.keyCode === konamiCode[konamiIndex]) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+            showMessage('🎉 Easter Egg ativado! Código Konami detectado! 🎉', 'success');
+            konamiIndex = 0;
+        }
+    } else {
+        konamiIndex = 0;
+    }
+});
+</script>
+</body>
+</html>
