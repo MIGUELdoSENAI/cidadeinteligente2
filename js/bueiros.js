@@ -748,3 +748,5 @@ function generateTXTReport() {
     
     addLog("Relatório TXT gerado e baixado");
 }
+
+//O código dos bueiros gerencia e monitora bueiros urbanos, mostrando ID, localização, capacidade, odor e status crítico. Ele permite buscar e filtrar bueiros, simula o enchimento em tempo real, gera alertas e notificações, registra manutenções e coleta de materiais, atualizando métricas e logs, além de exibir estatísticas e um gráfico histórico de capacidade média.

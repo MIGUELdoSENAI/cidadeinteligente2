@@ -537,3 +537,5 @@ function testSpin() {
     }
     addLog('⟳ Teste de rotação disparado', 'info');
 }
+
+//O código gerencia o dashboard de bueiros inteligentes, exibindo métricas como sensores ativos, impacto positivo, drenagens críticas e tempo de resposta. Atualiza dados e gráficos em tempo real, registra logs detalhados, gera relatórios e gerencia filas de solicitações. Também controla tema claro/escuro, modais, sidebar, logout e efeitos visuais de teste, mantendo o sistema interativo e monitorado.

@@ -406,3 +406,5 @@ function testSpin() {
         }, 600);
     }
 }
+
+//O código gerencia todas as instalações de energia, exibindo consumo, eficiência e status em tempo real. Ele atualiza a lista, mostra alertas, cria gráficos, abre modais de detalhes e gera relatórios. Também controla tema claro/escuro, sidebar, logout e efeitos de notificação, mantendo toda a página de energia dinâmica e interativa.

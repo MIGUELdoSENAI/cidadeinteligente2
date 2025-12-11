@@ -379,3 +379,4 @@ document.addEventListener('DOMContentLoaded', function() {
         if (themeButton) themeButton.textContent = '🌙';
     }
 });
+//O código gerencia todas as métricas de sustentabilidade do dashboard, atualiza os valores na tela e salva tudo no localStorage. Ele também cria gráficos, simula coletas de materiais, mostra notificações e permite exportar um relatório. Além disso, controla funções como tema claro/escuro, sidebar e logout, mantendo toda a parte de sustentabilidade funcional e interativa.
